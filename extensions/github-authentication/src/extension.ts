@@ -6,6 +6,7 @@
 import * as vscode from 'vscode';
 import { GitHubAuthenticationProvider, UriEventHandler } from './github';
 
+
 function initGHES(context: vscode.ExtensionContext, uriHandler: UriEventHandler) {
 	const settingValue = vscode.workspace.getConfiguration().get<string>('github-enterprise.uri');
 	if (!settingValue) {
@@ -31,6 +32,19 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(uriHandler);
 	context.subscriptions.push(vscode.window.registerUriHandler(uriHandler));
 
+
+	// let disposable = vscode.commands.registerCommand('extension.myExtension', async () => {
+	// 	try {
+	// 		// Execute the git.clone command
+	// 		await vscode.commands.executeCommand('git.clone');
+	// 		vscode.window.showInformationMessage('Git clone command executed successfully!');
+	// 	} catch (error) {
+	// 		vscode.window.showErrorMessage(`Error executing git.clone command: ${error.message}`);
+	// 	}
+	// });
+	// context.subscriptions.push(disposable);
+
+
 	context.subscriptions.push(new GitHubAuthenticationProvider(context, uriHandler));
 
 	let githubEnterpriseAuthProvider: GitHubAuthenticationProvider | undefined = initGHES(context, uriHandler);
@@ -43,4 +57,15 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		}
 	}));
+
 }
+// async function executeGitCloneCommand() {
+// 	try {
+// 		// Execute the git.clone command
+// 		await vscode.commands.executeCommand('git.clone');
+// 		vscode.window.showInformationMessage('Git clone command executed successfully!');
+// 	} catch (error) {
+// 		vscode.window.showErrorMessage(`Error executing git.clone command: ${error.message}`);
+// 	}
+
+// }

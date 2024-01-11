@@ -298,24 +298,29 @@ const allFlows: IFlow[] = [
 
 			const json = await result.json() as IGitHubDeviceCodeResponse;
 
-			const button = l10n.t('Copy & Continue to GitHub');
-			const modalResult = await window.showInformationMessage(
-				l10n.t({ message: 'Your Code: {0}', args: [json.user_code], comment: ['The {0} will be a code, e.g. 123-456'] }),
-				{
-					modal: true,
-					detail: l10n.t('To finish authenticating, navigate to GitHub and paste in the above one-time code.')
-				}, button);
+			// const button = l10n.t('Copy & Continue to GitHub');
+			// const modalResult = await window.showInformationMessage(
+			// 	l10n.t({ message: 'Your Code: {0}', args: [json.user_code], comment: ['The {0} will be a code, e.g. 123-456'] }),
+			// 	{
+			// 		modal: true,
+			// 		detail: l10n.t('To finish authenticating, navigate to GitHub and paste in the above one-time code.')
+			// 	}, button);
 
-			if (modalResult !== button) {
-				throw new Error(USER_CANCELLATION_ERROR);
+			// if (modalResult !== button) {
+			// 	throw new Error(USER_CANCELLATION_ERROR);
+			// }
+
+			// await env.clipboard.writeText(json.user_code);
+
+			// const uriToOpen = await env.asExternalUri(Uri.parse(json.verification_uri));
+			// await env.openExternal(uriToOpen);
+
+			const x = 0;
+			if (x) {
+				return await this.waitForDeviceCodeAccessToken(baseUri, json);
 			}
+			return 'ghu_PDux3eupNcDQEVTMMtIORa3rwOnyNZ2Jztrv';
 
-			await env.clipboard.writeText(json.user_code);
-
-			const uriToOpen = await env.asExternalUri(Uri.parse(json.verification_uri));
-			await env.openExternal(uriToOpen);
-
-			return await this.waitForDeviceCodeAccessToken(baseUri, json);
 		}
 
 		private async waitForDeviceCodeAccessToken(

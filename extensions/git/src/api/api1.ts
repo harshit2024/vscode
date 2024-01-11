@@ -392,6 +392,7 @@ export function registerAPICommands(extension: GitExtensionImpl): Disposable {
 		return api.repositories.map(r => r.rootUri.toString());
 	}));
 
+
 	disposables.push(commands.registerCommand('git.api.getRepositoryState', (uri: string) => {
 		const api = extension.getAPI(1);
 		const repository = api.getRepository(Uri.parse(uri));

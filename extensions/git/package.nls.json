@@ -405,7 +405,7 @@
 		]
 	},
 	"view.workbench.cloneRepository": {
-		"message": "You can clone a repository locally.\n[Clone Repository](command:git.clone 'Clone a repository once the Git extension has activated')",
+		"message": "You can clone a repository locally.\n[github](command:git.clone 'Clone a repository once the Git extension has activated')",
 		"comment": [
 			"{Locked='](command:git.clone'}",
 			"Do not translate the 'command:*' part inside of the '(..)'. It is an internal command syntax for VS Code",

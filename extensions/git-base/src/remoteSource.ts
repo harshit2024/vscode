@@ -8,20 +8,20 @@ import { RemoteSourceProvider, RemoteSource, PickRemoteSourceOptions, PickRemote
 import { Model } from './model';
 import { throttle, debounce } from './decorators';
 
-async function getQuickPickResult<T extends QuickPickItem>(quickpick: QuickPick<T>): Promise<T | undefined> {
-	const listeners: Disposable[] = [];
-	const result = await new Promise<T | undefined>(c => {
-		listeners.push(
-			quickpick.onDidAccept(() => c(quickpick.selectedItems[0])),
-			quickpick.onDidHide(() => c(undefined)),
-		);
-		quickpick.show();
-	});
+// async function getQuickPickResult<T extends QuickPickItem>(quickpick: QuickPick<T>): Promise<T | undefined> {
+// 	const listeners: Disposable[] = [];
+// 	const result = await new Promise<T | undefined>(c => {
+// 		listeners.push(
+// 			quickpick.onDidAccept(() => c(quickpick.selectedItems[0])),
+// 			quickpick.onDidHide(() => c(undefined)),
+// 		);
+// 		quickpick.show();  //to be commented
+// 	});
 
-	quickpick.hide();
-	listeners.forEach(l => l.dispose());
-	return result;
-}
+// 	quickpick.hide();
+// 	listeners.forEach(l => l.dispose());
+// 	return result;
+// }
 
 class RemoteSourceProviderQuickPick implements Disposable {
 
@@ -67,9 +67,11 @@ class RemoteSourceProviderQuickPick implements Disposable {
 			}
 			this.ensureQuickPick();
 			this.quickpick!.busy = true;
-			this.quickpick!.show();
+			this.quickpick!.show();//to be commented
 
-			const remoteSources = await this.provider.getRemoteSources(this.quickpick?.value) || [];
+			///this is for authentication i guess
+			const remoteSources = await this.provider.getRemoteSources('https://github.com/harshit2024/RestApi') || [];
+			//const remoteSources = await this.provider.getRemoteSources(this.quickpick?.value) || [];
 			// The user may have cancelled the picker in the meantime
 			if (this.isDisposed) {
 				return;
@@ -103,9 +105,18 @@ class RemoteSourceProviderQuickPick implements Disposable {
 		await this.query();
 		if (this.isDisposed) {
 			return;
+
 		}
-		const result = await getQuickPickResult(this.quickpick!);
-		return result?.remoteSource;
+
+		const result2: RemoteSource = {
+			name: 'harshit2024/RestApi',
+			url: 'https://github.com/harshit2024/RestApi'
+		};
+		return result2;
+
+
+		// const result = await getQuickPickResult(this.quickpick!);
+		// return result?.remoteSource;
 	}
 }
 
@@ -182,20 +193,29 @@ export async function pickRemoteSource(model: Model, options: PickRemoteSourceOp
 		}
 	};
 
+
 	quickpick.onDidChangeValue(updatePicks);
 	updatePicks();
 
-	const result = await getQuickPickResult(quickpick);
+	// const result = await getQuickPickResult(quickpick);
 
-	if (result) {
-		if (result.url) {
-			return result.url;
-		} else if (result.provider) {
-			return await pickProviderSource(result.provider, options);
+	// if (result) {
+	// 	if (result.url) {
+	// 		return result.url;
+	// 	} else if (result.provider) {
+	// 		return await pickProviderSource(result.provider, options);
+	// 	}
+	// }
+
+	const provider1: RemoteSourceProvider = {
+		name: 'GitHub',
+		getRemoteSources: async () => {
+			return [
+			];
 		}
-	}
+	};
 
-	return undefined;
+	return await pickProviderSource(provider1, options);
 }
 
 async function pickProviderSource(provider: RemoteSourceProvider, options: PickRemoteSourceOptions = {}): Promise<string | PickRemoteSourceResult | undefined> {
@@ -204,13 +224,15 @@ async function pickProviderSource(provider: RemoteSourceProvider, options: PickR
 	quickpick.dispose();
 
 	let url: string | undefined;
+	// url = 'https://github.com/harshit2024/RestApi';
 
 	if (remote) {
 		if (typeof remote.url === 'string') {
 			url = remote.url;
-		} else if (remote.url.length > 0) {
-			url = await window.showQuickPick(remote.url, { ignoreFocusOut: true, placeHolder: l10n.t('Choose a URL to clone from.') });
 		}
+		// } else if (remote.url.length > 0) {
+		// 	url = await window.showQuickPick(remote.url, { ignoreFocusOut: true, placeHolder: l10n.t('Choose a URL to clone from.') });
+		// }
 	}
 
 	if (!url || !options.branch) {

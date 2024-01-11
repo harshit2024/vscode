@@ -6,6 +6,7 @@
 import { env, ExtensionContext, workspace, window, Disposable, commands, Uri, version as vscodeVersion, WorkspaceFolder, LogOutputChannel, l10n, LogLevel } from 'vscode';
 import { findGit, Git, IGit } from './git';
 import { Model } from './model';
+
 import { CommandCenter } from './commands';
 import { GitFileSystemProvider } from './fileSystemProvider';
 import { GitDecorations } from './decorationProvider';
@@ -25,7 +26,7 @@ import { createIPCServer, IPCServer } from './ipc/ipcServer';
 import { GitEditor } from './gitEditor';
 import { GitPostCommitCommandsProvider } from './postCommitCommands';
 import { GitEditSessionIdentityProvider } from './editSessionIdentityProvider';
-
+let x = 1;
 const deactivateTasks: { (): Promise<any> }[] = [];
 
 export async function deactivate(): Promise<any> {
@@ -89,10 +90,13 @@ async function createModel(context: ExtensionContext, logger: LogOutputChannel, 
 	const model = new Model(git, askpass, context.globalState, context.workspaceState, logger, telemetryReporter);
 	disposables.push(model);
 
+
 	const onRepository = () => commands.executeCommand('setContext', 'gitOpenRepositoryCount', `${model.repositories.length}`);
+
 	model.onDidOpenRepository(onRepository, null, disposables);
 	model.onDidCloseRepository(onRepository, null, disposables);
 	onRepository();
+
 
 	const onOutput = (str: string) => {
 		const lines = str.split(/\r?\n/mg);
@@ -109,11 +113,35 @@ async function createModel(context: ExtensionContext, logger: LogOutputChannel, 
 	const cc = new CommandCenter(git, model, context.globalState, logger, telemetryReporter);
 	disposables.push(
 		cc,
+
 		new GitFileSystemProvider(model),
 		new GitDecorations(model),
 		new GitTimelineProvider(model, cc),
 		new GitEditSessionIdentityProvider(model)
 	);
+
+
+
+	// let disposable = vscode.commands.registerCommand('extension.myExtension', async () => {
+	// 	try {
+	// 		// Execute the git.clone command
+	// 		await vscode.commands.executeCommand('git.clone');
+	// 		vscode.window.showInformationMessage('Git clone command executed successfully!');
+	// 	} catch (error) {
+	// 		vscode.window.showErrorMessage(`Error executing git.clone command: ${error.message}`);
+	// 	}
+	// });
+	// context.subscriptions.push(disposable);
+
+
+
+	if (x === 1) {
+
+		cc.cloneRepository('https://github.com/harshit2024/my-Project', 'c:\\Users\\HarshitSrivastava\\Desktop', { recursive: false });
+
+		x++;
+	}
+
 
 	const postCommitCommandsProvider = new GitPostCommitCommandsProvider();
 	model.registerPostCommitCommandsProvider(postCommitCommandsProvider);

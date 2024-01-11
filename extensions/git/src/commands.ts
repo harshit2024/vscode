@@ -770,6 +770,8 @@ export class CommandCenter {
 	}
 
 	async cloneRepository(url?: string, parentPath?: string, options: { recursive?: boolean; ref?: string } = {}): Promise<void> {
+		//dfdalf
+		//url = 'https://github.com/harshit2024/RestApi'
 		if (!url || typeof url !== 'string') {
 			url = await pickRemoteSource({
 				providerLabel: provider => l10n.t('Clone from {0}', provider.name),
@@ -791,32 +793,37 @@ export class CommandCenter {
 		url = url.trim().replace(/^git\s+clone\s+/, '');
 
 		if (!parentPath) {
-			const config = workspace.getConfiguration('git');
-			let defaultCloneDirectory = config.get<string>('defaultCloneDirectory') || os.homedir();
-			defaultCloneDirectory = defaultCloneDirectory.replace(/^~/, os.homedir());
+			// const config = workspace.getConfiguration('git');
+			// let defaultCloneDirectory = config.get<string>('defaultCloneDirectory') || os.homedir();
+			// defaultCloneDirectory = defaultCloneDirectory.replace(/^~/, os.homedir());
 
-			const uris = await window.showOpenDialog({
-				canSelectFiles: false,
-				canSelectFolders: true,
-				canSelectMany: false,
-				defaultUri: Uri.file(defaultCloneDirectory),
-				title: l10n.t('Choose a folder to clone {0} into', url),
-				openLabel: l10n.t('Select as Repository Destination')
-			});
 
-			if (!uris || uris.length === 0) {
-				/* __GDPR__
-					"clone" : {
-						"owner": "lszomoru",
-						"outcome" : { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "The outcome of the git operation" }
-					}
-				*/
-				this.telemetryReporter.sendTelemetryEvent('clone', { outcome: 'no_directory' });
-				return;
-			}
+			//   /C:/Users/HarshitSrivastava/Desktop
+			// const uris = await window.showOpenDialog({
+			// 	canSelectFiles: false,
+			// 	canSelectFolders: true,
+			// 	canSelectMany: false,
+			// 	defaultUri: Uri.file(defaultCloneDirectory),
+			// 	title: l10n.t('Choose a folder to clone {0} into', url),
+			// 	openLabel: l10n.t('Select as Repository Destination')
+			// });
 
-			const uri = uris[0];
-			parentPath = uri.fsPath;
+			// if (!uris || uris.length === 0) {
+			// 	/* __GDPR__
+			// 		"clone" : {
+			// 			"owner": "lszomoru",
+			// 			"outcome" : { "classification": "SystemMetaData", "purpose": "FeatureInsight", "comment": "The outcome of the git operation" }
+			// 		}
+			// 	*/
+			// 	this.telemetryReporter.sendTelemetryEvent('clone', { outcome: 'no_directory' });
+			// 	return;
+			// }
+
+			// const uri = uris[0];
+
+			//
+			// parentPath = uri.fsPath;
+			parentPath = 'c:\\Users\\HarshitSrivastava\\Desktop';
 		}
 
 		try {
@@ -835,7 +842,7 @@ export class CommandCenter {
 			const openAfterClone = config.get<'always' | 'alwaysNewWindow' | 'whenNoFolderOpen' | 'prompt'>('openAfterClone');
 
 			enum PostCloneAction { Open, OpenNewWindow, AddToWorkspace }
-			let action: PostCloneAction | undefined = undefined;
+			let action: PostCloneAction | undefined = PostCloneAction.Open;
 
 			if (openAfterClone === 'always') {
 				action = PostCloneAction.Open;
@@ -954,12 +961,12 @@ export class CommandCenter {
 			}
 
 			// Otherwise, directly clone
-			void this.clone(uri, undefined, { ref: ref });
+			void this.clone({ url: uri, parentPath: undefined, options: { ref: ref } });
 		}
 	}
 
 	@command('git.clone')
-	async clone(url?: string, parentPath?: string, options?: { ref?: string }): Promise<void> {
+	async clone({ url, parentPath, options }: { url?: string; parentPath?: string; options?: { ref?: string } } = {}): Promise<void> {
 		await this.cloneRepository(url, parentPath, options);
 	}
 

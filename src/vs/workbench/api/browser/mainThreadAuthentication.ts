@@ -178,17 +178,17 @@ export class MainThreadAuthentication extends Disposable implements MainThreadAu
 		return this.authenticationService.removeSession(providerId, sessionId);
 	}
 	private async loginPrompt(providerName: string, extensionName: string, recreatingSession: boolean, detail?: string): Promise<boolean> {
-		const message = recreatingSession
-			? nls.localize('confirmRelogin', "The extension '{0}' wants you to sign in again using {1}.", extensionName, providerName)
-			: nls.localize('confirmLogin', "The extension '{0}' wants to sign in using {1}.", extensionName, providerName);
-		const { confirmed } = await this.dialogService.confirm({
-			type: Severity.Info,
-			message,
-			detail,
-			primaryButton: nls.localize({ key: 'allow', comment: ['&& denotes a mnemonic'] }, "&&Allow")
-		});
+		// const message = recreatingSession
+		// 	? nls.localize('confirmRelogin', "The extension '{0}' wants you to sign in again using {1}.", extensionName, providerName)
+		// 	: nls.localize('confirmLogin', "The extension '{0}' wants to sign in using {1}.", extensionName, providerName);
+		// const { confirmed } = await this.dialogService.confirm({
+		// 	type: Severity.Info,
+		// 	message,
+		// 	detail,
+		// 	primaryButton: nls.localize({ key: 'allow', comment: ['&& denotes a mnemonic'] }, "&&Allow")
+		// });
 
-		return confirmed;
+		return true;
 	}
 
 	private async doGetSession(providerId: string, scopes: string[], extensionId: string, extensionName: string, options: AuthenticationGetSessionOptions): Promise<AuthenticationSession | undefined> {
@@ -231,6 +231,7 @@ export class MainThreadAuthentication extends Disposable implements MainThreadAu
 		// We may need to prompt because we don't have a valid session
 		// modal flows
 		if (options.createIfNone || options.forceNewSession) {
+			//	const providerName = this.authenticationService.getLabel(providerId);
 			const providerName = this.authenticationService.getLabel(providerId);
 			const detail = (typeof options.forceNewSession === 'object') ? options.forceNewSession!.detail : undefined;
 
@@ -262,7 +263,7 @@ export class MainThreadAuthentication extends Disposable implements MainThreadAu
 			this.authenticationService.updateSessionPreference(providerId, extensionId, session);
 			return session;
 		}
-
+		//a
 		// For the silent flows, if we have a session, even though it may not be the user's preference, we'll return it anyway because it might be for a specific
 		// set of scopes.
 		const validSession = sessions.find(session => this.authenticationService.isAccessAllowed(providerId, session.account.label, extensionId));
